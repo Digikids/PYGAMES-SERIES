@@ -1,4 +1,5 @@
 import pygame
+import time
 
 pygame.init()
 
@@ -16,9 +17,13 @@ car_width = 73
 clock = pygame.time.Clock()
 
 carImg = pygame.image.load('resources/racecar.png')
+enemyImg = pygame.image.load('resources/ship.png')
 
 def car(x, y):
     gameDisplay.blit(carImg, (x, y))
+
+def enemy(enemyX, enemyY):
+    gameDisplay.blit(enemyImg, (enemyX, enemyY))
 
 def text_objects(text, font):
     textSurface = font.render(text, True, gold)
@@ -32,7 +37,7 @@ def message_display(text):
 
     pygame.display.update()
 
-    clock.sleep(5)
+    time.sleep(2)
 
     game_loop()
 
@@ -42,8 +47,10 @@ def crash():
 def game_loop():
     x = (display_width/2)
     y = (display_height-90)
-
+    enemyX = display_width/2
+    enemyY = -5
     crashed = False
+    moving_right, moving_left = True, False
 
     x_change = 0
 
@@ -51,6 +58,8 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 crashed = True
+                pygame.quit()
+                quit()
 
         #Movement
             if event.type == pygame.KEYDOWN:
@@ -67,6 +76,21 @@ def game_loop():
 
         gameDisplay.fill(white)
         car(x, y)
+        enemy(enemyX, enemyY)
+
+        #moving_enemy
+        if moving_right == True:
+            enemyX += 1
+            if enemyX > (display_width-100):
+                enemyY += 100
+                moving_right = False
+                moving_left = True
+        elif moving_left == True:
+            enemyX -= 1
+            if enemyX < 0:
+                enemyY += 100
+                moving_right = True 
+                moving_left = False 
 
         if x > (display_width-car_width) or x < 0:
             crash()
@@ -75,5 +99,3 @@ def game_loop():
         clock.tick(100)
 
 game_loop()
-pygame.quit()
-quit()
