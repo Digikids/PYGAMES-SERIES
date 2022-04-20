@@ -1,5 +1,7 @@
 import pygame
 import time
+from random import randrange, randint
+import random 
 
 pygame.init()
 
@@ -13,6 +15,7 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 gold = (255,215,0)
 car_width = 73
+global my_enemies
 
 clock = pygame.time.Clock()
 
@@ -23,8 +26,8 @@ def car(x, y):
     gameDisplay.blit(carImg, (x, y))
 
 def enemy(enemyX, enemyY):
-    gameDisplay.blit(enemyImg, (enemyX, enemyY))
-
+    gameDisplay.blit(enemyImg, (enemyX, enemyY))  
+    
 def text_objects(text, font):
     textSurface = font.render(text, True, gold)
     return textSurface, textSurface.get_rect()
@@ -50,9 +53,15 @@ def game_loop():
     enemyX = display_width/2
     enemyY = -5
     crashed = False
-    moving_right, moving_left = True, False
+    moving_right, moving_left, moving_down = True, False, True
 
     x_change = 0
+    
+    my_enemies = []
+    for i in range(5):
+        e_x = random.randrange(0, display_width)
+        e_y = random.randrange(-300, -200)
+        my_enemies.append([e_x, e_y])
 
     while crashed == False:
         for event in pygame.event.get():
@@ -76,25 +85,34 @@ def game_loop():
 
         gameDisplay.fill(white)
         car(x, y)
-        enemy(enemyX, enemyY)
+        
+        
+        for i in range(len(my_enemies)):
+            a = my_enemies[i][0]
+            b = my_enemies[i][1]
+            gameDisplay.blit(enemyImg, (a, b))
 
         #moving_enemy
-        if moving_right == True:
-            enemyX += 1
-            if enemyX > (display_width-100):
-                enemyY += 100
-                moving_right = False
-                moving_left = True
-        elif moving_left == True:
-            enemyX -= 1
-            if enemyX < 0:
-                enemyY += 100
-                moving_right = True 
-                moving_left = False 
+            if b < 0:
+                my_enemies[i][1] += 1
+
+            if moving_right == True:
+                my_enemies[i][0] += 1
+                if my_enemies[i][0] > (display_width-100):
+                    my_enemies[i][1] += 100
+                    moving_right = False
+                    moving_left = True
+            if moving_left == True:
+                my_enemies[i][0] -= 1
+                if my_enemies[i][0] < 0:
+                    my_enemies[i][1] += 100
+                    moving_right = True 
+                    moving_left = False 
 
         if x > (display_width-car_width) or x < 0:
             crash()
 
+        print(my_enemies)
         pygame.display.update()
         clock.tick(100)
 
