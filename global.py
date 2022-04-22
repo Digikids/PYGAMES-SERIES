@@ -1,11 +1,7 @@
-my_school = "Digikids"
-def show_school():
-    global my_school
-    print(my_school)
+import random
 
-def show_school1():
-    global my_school
-    x = my_school
-    print(x)
+my_list = []
 
-show_school1()
+my_list.append(random.randint(0, 10))
+
+print(my_list)
